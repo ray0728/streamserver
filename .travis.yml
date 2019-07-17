@@ -1,0 +1,28 @@
+language: java
+jdk:
+- oraclejdk8
+cache:
+  directories:
+  - "$HOME/.m2"
+sudo: required
+services:
+- docker
+notifications:
+  email:
+  - 51101661@qq.com
+  on_success: always
+  on_failure: always
+branches:
+  only:
+  - master
+env:
+  global: 
+before_install:
+- export BUILD_NAME=-$TRAVIS_BRANCH-$(date -u "+%Y%m%d%H%M%S")-$TRAVIS_BUILD_NUMBER
+script:
+- sh travis_scripts/tag_build.sh
+- sh travis_scripts/build_services.sh
+- sh travis_scripts/deploy_to_docker_hub.sh
+evn:
+  global:
+    secure: BKPzqqU67IJUFv1AipTJgDNXQaP9pgDe812IoYjE3yNB/fPq41O3qybqC07aceK0x0VCS5uS5Kxywx8RfY7B+azTB26iqWOpOLqYjS9kiSDfGpU9Ik6Qxh9gWiIgihxb7j07o4bSknoD3zfOSTUudNgK+sdQZndStpc3PA9IJ1un9TeMgcra6IAFTfmWrhDu3sAIqzQk7NLNeSOu8cRZ+UbAace8KxXXxIAagWILXLm20YiFCRNpPGBZPTcSVY6lmZ0/3s8TZyUbWGGBjh5X3LgmpdydzO/uIRBlkFnSyZX+x51GdcGSXbweMSPzwlUx2BowarF9aqcHH1Uemxxwn90hntYEmyUU2v1d/ucpkJA0iGtVR9RUawA+K6VaXrV713A6C3MR2Q/ippCmh2GxbNLPDQ5BcW8SRJdCnAD0J6XnEHCAm181OaSic71J1KT4+/inHBjyjFW9N1uLt0Qieg4agm7XNqordyuPtqNkr+4E+JfTS/ifms4ZfJmZV9eaUByR9rtXpyEKWdWexbRqP/Xh91XJWdKjzBAtExqfR9p9UwlSJ3RcT/nBfxFZLDPcEgt5BvC0g992du7+l+D3HJAWWYwdcSwAac154mXBYjQadoOTuSe6P5dHYO3HJtGM76a5klU2XwftEnv7AreloTz/qMvLn2diV7SlW5LiD74=
