@@ -41,6 +41,7 @@ public class HLSService implements CommandCallback<HLSService.MateData> {
             dstFile.mkdirs();
         }
         md.filename = srcFile.getName();
+        md.srcfile = srcfile;
         md.id = id;
         List<String> cmd = new ArrayList<>();
         cmd.add(assembleAbsoluteFilePath(ffmpeg_bin_path, "ffmpeg"));
@@ -69,7 +70,6 @@ public class HLSService implements CommandCallback<HLSService.MateData> {
     }
 
 
-
     @Override
     public void preProcess(MateData flag) {
 
@@ -86,7 +86,11 @@ public class HLSService implements CommandCallback<HLSService.MateData> {
         switch (flag.type) {
             case FLAG_CREATE_HLS_FILES:
                 result = checkHLSFilesCreatedResult(flag.filepath);
-                while(!sendHLSSplitFinished(flag.id, flag.filename, result)){
+                if (result) {
+                    File file = new File(flag.srcfile);
+                    file.delete();
+                }
+                while (!sendHLSSplitFinished(flag.id, flag.filename, result)) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -98,12 +102,12 @@ public class HLSService implements CommandCallback<HLSService.MateData> {
     }
 
     @HystrixCommand(fallbackMethod = "buildFallbacksendHLSSplitFinished", threadPoolKey = "MessageThreadPool")
-    public boolean sendHLSSplitFinished (int id, String filename, boolean ret) {
+    public boolean sendHLSSplitFinished(int id, String filename, boolean ret) {
         remoteMessageFeignClient.sendHLSSplitFinished(id, filename, ret);
         return true;
     }
 
-    public boolean buildFallbacksendHLSSplitFinished(int id, String filename, boolean ret, Throwable throwable){
+    public boolean buildFallbacksendHLSSplitFinished(int id, String filename, boolean ret, Throwable throwable) {
         return false;
     }
 
@@ -130,6 +134,7 @@ public class HLSService implements CommandCallback<HLSService.MateData> {
         public int type;
         public String filename;
         public String url;
+        public String srcfile;
         public int id;
         public String filepath;
 

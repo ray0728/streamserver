@@ -24,7 +24,7 @@ while ! `nc -z authserver $AUTH_PORT`; do sleep 3; done
 echo "******** Database Server has started "
 
 echo "********************************************************"
-echo "Starting the Account Server"
+echo "Starting the Stream Server"
 echo "********************************************************"
 java -Djava.security.egd=file:/dev/./urandom                \
      -Dspring.cloud.config.uri=$CONFIGSERVER_URI            \
