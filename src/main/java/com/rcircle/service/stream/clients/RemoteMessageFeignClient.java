@@ -5,10 +5,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(name = "service-message")
+@FeignClient(name = "service-message", configuration = HttpContextInterceptor.class)
 public interface RemoteMessageFeignClient {
     @RequestMapping(method = RequestMethod.POST, value = "/hls/split/result")
     public String sendHLSSplitFinished(@RequestParam(name = "id") int logid,
-                                       @RequestParam(name="file") String filename,
-                                       @RequestParam(name="result") boolean ret);
+                                       @RequestParam(name = "file") String filename,
+                                       @RequestParam(name = "result") boolean ret);
 }
