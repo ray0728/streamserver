@@ -2,6 +2,8 @@ package com.rcircle.service.stream.Controller;
 
 import com.rcircle.service.stream.services.HLSService;
 import com.rcircle.service.stream.services.MessageService;
+import com.rcircle.service.stream.utils.HttpContext;
+import com.rcircle.service.stream.utils.HttpContextHolder;
 import com.rcircle.service.stream.utils.Toolkit;
 import com.rcircle.service.stream.utils.core.CommandCallback;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +34,7 @@ public class StreamController {
                                  @RequestParam(value = "id", required = false, defaultValue = "0") int logid,
                                  @RequestParam(value = "url", required = false, defaultValue = "") String baseurl) {
         MateData md = new MateData(type);
+        md.token = HttpContextHolder.getContext().getValue(HttpContext.AUTH_TOKEN);
         switch (type) {
             case TYPE_CREATE_HLS:
                 srcfile = Toolkit.decodeFromUrl(srcfile);
@@ -47,7 +50,7 @@ public class StreamController {
         return "";
     }
 
-    public class HlsProcessCallback implements CommandCallback<MateData>{
+    public class HlsProcessCallback implements CommandCallback<MateData> {
 
         @Override
         public void preProcess(MateData flag) {
@@ -62,6 +65,7 @@ public class StreamController {
         @Override
         public void afterProcess(MateData flag) {
             boolean result = false;
+            HttpContextHolder.getContext().setValue(HttpContext.AUTH_TOKEN, flag.token);
             switch (flag.type) {
                 case TYPE_CREATE_HLS:
                     result = hlsService.checkHLSFilesCreatedResult(flag.filepath);
@@ -88,6 +92,7 @@ public class StreamController {
         public String srcfile;
         public int id;
         public String filepath;
+        public String token;
 
         public MateData(int type) {
             this.type = type;
