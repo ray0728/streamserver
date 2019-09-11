@@ -2,13 +2,13 @@
 echo "********************************************************"
 echo "Waiting for the configuration server to start on port $CONFIGSERVER_PORT"
 echo "********************************************************"
-while ! `nc -z configserver $CONFIGSERVER_PORT`; do sleep 3; done
+while ! `nc -z config.iamray.cn $CONFIGSERVER_PORT`; do sleep 3; done
 echo "*******  Configuration Server has started"
 
 echo "********************************************************"
 echo "Waiting for the eureka server to start on port $EUREKASERVER_PORT"
 echo "********************************************************"
-while ! `nc -z discoveryserver $EUREKASERVER_PORT`; do sleep 3; done
+while ! `nc -z discovery.iamray.cn $EUREKASERVER_PORT`; do sleep 3; done
 echo "******* Eureka Server has started"
 
 echo "********************************************************"
@@ -20,7 +20,7 @@ echo "******* ZIPKIN has started"
 echo "********************************************************"
 echo "Waiting for the auth server to start on port $AUTH_PORT"
 echo "********************************************************"
-while ! `nc -z authserver $AUTH_PORT`; do sleep 3; done
+while ! `nc -z auth.iamray.cn $AUTH_PORT`; do sleep 3; done
 echo "******** Database Server has started "
 
 echo "********************************************************"
