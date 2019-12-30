@@ -1,5 +1,4 @@
 ARG FFMPEG_VERSION=4.2.1
-EXPOSE 1935
 #################BUILD FFMPEG###########################
 FROM ubuntu:18.04 as build-ffmpeg
 ARG FFMPEG_VERSION
@@ -93,4 +92,5 @@ RUN apt update && apt install -y netcat-openbsd
 ADD @project.build.finalName@.jar /usr/local/server
 ADD run.sh run.sh
 RUN chmod +x run.sh
+EXPOSE 1935
 CMD ./run.sh
