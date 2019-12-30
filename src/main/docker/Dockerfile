@@ -67,7 +67,7 @@ RUN cd /tmp/ffmpeg-${FFMPEG_VERSION} && \
 RUN rm -rf /var/cache/* /tmp/*
 #################END BUILD FFMPEG#######################
 #################BUILD RELEASE##########################
-FROM ubuntu:18.04
+FROM ray0728/web-jar:1.8.0
 LABEL MAINTAINER Ray0728 <51101661@qq.com>
 RUN apt update && apt install -y \
   ca-certificates \
