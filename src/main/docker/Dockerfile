@@ -1,12 +1,12 @@
 ARG FFMPEG_VERSION=4.2.1
 #################BUILD FFMPEG###########################
-FROM ubuntu:18.04 as build-ffmpeg
+FROM alpine:3.8 as build-ffmpeg
 ARG FFMPEG_VERSION
 ARG PREFIX=/usr/local
 ARG MAKEFLAGS="-j4"
 
 # FFmpeg build dependencies.
-RUN apt update && apt install -y \
+RUN apk add --update \
   build-base \
   coreutils \
   freetype-dev \
@@ -25,8 +25,10 @@ RUN apt update && apt install -y \
   wget \
   x264-dev \
   x265-dev \
-  fdk-aac-dev \
   yasm
+
+RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories
+RUN apk add --update fdk-aac-dev
 
 # Get FFmpeg source.
 RUN cd /tmp/ && \
@@ -64,7 +66,6 @@ RUN cd /tmp/ffmpeg-${FFMPEG_VERSION} && \
 
 # Cleanup.
 RUN rm -rf /var/cache/* /tmp/*
-#################END BUILD FFMPEG#######################
 #################BUILD RELEASE##########################
 FROM ray0728/web-jar:1.8.0
 LABEL MAINTAINER Ray0728 <51101661@qq.com>
