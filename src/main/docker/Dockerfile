@@ -145,7 +145,6 @@ ENV PATH "${PATH}:/usr/local/nginx/sbin"
 ADD nginx.conf /etc/nginx/nginx.conf
 RUN mkdir -p /opt/data && mkdir /www
 ADD static /www/static
-CMD ["nginx&"]
 #################Install Service######################
 RUN mkdir -p /usr/local/server
 ADD @project.build.finalName@.jar /usr/local/server
