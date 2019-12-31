@@ -1,3 +1,6 @@
+ARG NGINX_VERSION=1.16.1
+ARG NGINX_RTMP_VERSION=1.2.1
+ARG FFMPEG_VERSION=4.2.1
 ##############################
 # Build the NGINX-build image.
 FROM alpine:3.9 as build-nginx
