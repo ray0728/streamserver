@@ -1,6 +1,54 @@
-ARG FFMPEG_VERSION=4.2.1
-#################BUILD FFMPEG###########################
-FROM alpine:3.8 as build-ffmpeg
+##############################
+# Build the NGINX-build image.
+FROM alpine:3.9 as build-nginx
+ARG NGINX_VERSION
+ARG NGINX_RTMP_VERSION
+
+# Build dependencies.
+RUN apk add --update \
+  build-base \
+  ca-certificates \
+  curl \
+  gcc \
+  libc-dev \
+  libgcc \
+  linux-headers \
+  make \
+  musl-dev \
+  openssl \
+  openssl-dev \
+  pcre \
+  pcre-dev \
+  pkgconf \
+  pkgconfig \
+  zlib-dev
+
+# Get nginx source.
+RUN cd /tmp && \
+  wget https://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz && \
+  tar zxf nginx-${NGINX_VERSION}.tar.gz && \
+  rm nginx-${NGINX_VERSION}.tar.gz
+
+# Get nginx-rtmp module.
+RUN cd /tmp && \
+  wget https://github.com/arut/nginx-rtmp-module/archive/v${NGINX_RTMP_VERSION}.tar.gz && \
+  tar zxf v${NGINX_RTMP_VERSION}.tar.gz && rm v${NGINX_RTMP_VERSION}.tar.gz
+
+# Compile nginx with nginx-rtmp module.
+RUN cd /tmp/nginx-${NGINX_VERSION} && \
+  ./configure \
+  --prefix=/usr/local/nginx \
+  --add-module=/tmp/nginx-rtmp-module-${NGINX_RTMP_VERSION} \
+  --conf-path=/etc/nginx/nginx.conf \
+  --with-threads \
+  --with-file-aio \
+  --with-http_ssl_module \
+  --with-debug && \
+  cd /tmp/nginx-${NGINX_VERSION} && make && make install
+
+###############################
+# Build the FFmpeg-build image.
+FROM alpine:3.9 as build-ffmpeg
 ARG FFMPEG_VERSION
 ARG PREFIX=/usr/local
 ARG MAKEFLAGS="-j4"
@@ -66,26 +114,12 @@ RUN cd /tmp/ffmpeg-${FFMPEG_VERSION} && \
 
 # Cleanup.
 RUN rm -rf /var/cache/* /tmp/*
-#################BUILD RELEASE##########################
-FROM alpine:3.8
-ENV LANG C.UTF-8
-RUN { \
-		echo '#!/bin/sh'; \
-		echo 'set -e'; \
-		echo; \
-		echo 'dirname "$(dirname "$(readlink -f "$(which javac || which java)")")"'; \
-	} > /usr/local/bin/docker-java-home \
-	&& chmod +x /usr/local/bin/docker-java-home
-ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
-ENV PATH $PATH:/usr/lib/jvm/java-1.8-openjdk/jre/bin:/usr/lib/jvm/java-1.8-openjdk/bin
-ENV JAVA_VERSION 8u171
-ENV JAVA_ALPINE_VERSION 8.171.11-r0
 
-RUN set -x \
-	&& apk add --no-cache \
-		openjdk8="$JAVA_ALPINE_VERSION" \
-	&& [ "$JAVA_HOME" = "$(docker-java-home)" ]
-LABEL MAINTAINER Ray0728 <51101661@qq.com>
+##########################
+# Build the release image.
+FROM  liumiaocn/jdk:ora8u201-alpine3.9-glibc2.29
+LABEL MAINTAINER Alfred Gutierrez <alf.g.jr@gmail.com>
+
 RUN apk add --update \
   ca-certificates \
   openssl \
@@ -102,12 +136,20 @@ RUN apk add --update \
   x264-dev \
   x265-dev
 
+COPY --from=build-nginx /usr/local/nginx /usr/local/nginx
 COPY --from=build-ffmpeg /usr/local /usr/local
 COPY --from=build-ffmpeg /usr/lib/libfdk-aac.so.2 /usr/lib/libfdk-aac.so.2
-#################END BUILD RELEASE######################
+
+# Add NGINX path, config and static files.
+ENV PATH "${PATH}:/usr/local/nginx/sbin"
+ADD nginx.conf /etc/nginx/nginx.conf
+RUN mkdir -p /opt/data && mkdir /www
+ADD static /www/static
+CMD ["nginx&"]
+#################Install Service######################
 RUN mkdir -p /usr/local/server
 ADD @project.build.finalName@.jar /usr/local/server
 ADD run.sh run.sh
 RUN chmod +x run.sh
 EXPOSE 1935
-CMD ./run.sh
+CMD ["./run.sh"]
