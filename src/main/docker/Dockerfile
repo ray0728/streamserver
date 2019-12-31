@@ -67,9 +67,9 @@ RUN cd /tmp/ffmpeg-${FFMPEG_VERSION} && \
 # Cleanup.
 RUN rm -rf /var/cache/* /tmp/*
 #################BUILD RELEASE##########################
-FROM ray0728/web-jar:1.8.0
+FROM java:8-jre-alpine
 LABEL MAINTAINER Ray0728 <51101661@qq.com>
-RUN apt update && apt install -y \
+RUN apk add --update \
   ca-certificates \
   openssl \
   pcre \
@@ -84,12 +84,11 @@ RUN apt update && apt install -y \
   rtmpdump \
   x264-dev \
   x265-dev
+
 COPY --from=build-ffmpeg /usr/local /usr/local
 COPY --from=build-ffmpeg /usr/lib/libfdk-aac.so.2 /usr/lib/libfdk-aac.so.2
 #################END BUILD RELEASE######################
 RUN mkdir -p /usr/local/server
-ADD sources.list /etc/apt/
-RUN apt update && apt install -y netcat-openbsd
 ADD @project.build.finalName@.jar /usr/local/server
 ADD run.sh run.sh
 RUN chmod +x run.sh
