@@ -38,6 +38,7 @@ COPY --from=build-source /tmp/v${NGINX_RTMP_VERSION} /mnt/source/
 RUN ./configure --prefix=/usr/local/nginx-${NGINX_VERSION} --with-openssl=/mnt/source/openssl-{OPENSSL_VERSION}/ --with-pcre=/mnt/source/pcre-{PCRE_VERSION}/ \ --with-zlib=/mnt/source/zlib-{ZLIB_VERSION}/ --add-module=/mnt/source/v${NGINX_RTMP_VERSION}/ --with-http_ssl_module && make && make install
 RUN cd /&&rm -rf /mnt/
 ADD @project.build.finalName@.jar /usr/local/server
+ADD nginx.conf /etc/nginx/nginx.conf
 ADD run.sh run.sh
 RUN chmod +x run.sh
 CMD ./run.sh
