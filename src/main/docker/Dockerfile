@@ -1,6 +1,8 @@
 ARG NGINX_VERSION=1.16.1
 ARG NGINX_RTMP_VERSION=1.2.1
 ARG FFMPEG_VERSION=4.2.1
+
+
 ##############################
 # Build the NGINX-build image.
 FROM alpine:3.8 as build-nginx
@@ -121,22 +123,9 @@ RUN rm -rf /var/cache/* /tmp/*
 ##########################
 # Build the release image.
 FROM alpine:3.8
-
-# A few reasons for installing distribution-provided OpenJDK:
-#
-#  1. Oracle.  Licensing prevents us from redistributing the official JDK.
-#
-#  2. Compiling OpenJDK also requires the JDK to be installed, and it gets
-#     really hairy.
-#
-#     For some sample build times, see Debian's buildd logs:
-#       https://buildd.debian.org/status/logs.php?pkg=openjdk-8
-
-# Default to UTF-8 file.encoding
 ENV LANG C.UTF-8
+LABEL MAINTAINER Ray <51101661@qq.com>
 
-# add a simple script that can auto-detect the appropriate JAVA_HOME value
-# based on whether the JDK or only the JRE is installed
 RUN { \
 		echo '#!/bin/sh'; \
 		echo 'set -e'; \
@@ -154,9 +143,7 @@ RUN set -x \
 	&& apk add --no-cache \
 		openjdk8="$JAVA_ALPINE_VERSION" \
 	&& [ "$JAVA_HOME" = "$(docker-java-home)" ]
-
-LABEL MAINTAINER Ray <51101661@qq.com>
-
+	
 RUN apk add --update \
   ca-certificates \
   openssl \
@@ -182,10 +169,8 @@ ENV PATH "${PATH}:/usr/local/nginx/sbin"
 ADD nginx.conf /etc/nginx/nginx.conf
 RUN mkdir -p /opt/data && mkdir /www
 ADD static /www/static
-#################Install Service######################
-RUN mkdir -p /usr/local/server
-ADD @project.build.finalName@.jar /usr/local/server
-ADD run.sh run.sh
-RUN chmod +x run.sh
+
 EXPOSE 1935
-CMD ["./run.sh"]
+EXPOSE 80
+
+CMD ["nginx"]
