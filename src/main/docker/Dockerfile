@@ -3,7 +3,7 @@ ARG NGINX_RTMP_VERSION=1.2.1
 ARG FFMPEG_VERSION=4.2.1
 ##############################
 # Build the NGINX-build image.
-FROM alpine:3.9 as build-nginx
+FROM openjdk:8-jdk-alpine as build-nginx
 ARG NGINX_VERSION
 ARG NGINX_RTMP_VERSION
 
@@ -51,7 +51,7 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
 
 ###############################
 # Build the FFmpeg-build image.
-FROM alpine:3.9 as build-ffmpeg
+FROM openjdk:8-jdk-alpine as build-ffmpeg
 ARG FFMPEG_VERSION
 ARG PREFIX=/usr/local
 ARG MAKEFLAGS="-j4"
@@ -120,8 +120,8 @@ RUN rm -rf /var/cache/* /tmp/*
 
 ##########################
 # Build the release image.
-FROM  liumiaocn/jdk:ora8u201-alpine3.9-glibc2.29
-LABEL MAINTAINER Alfred Gutierrez <alf.g.jr@gmail.com>
+FROM  openjdk:8-jdk-alpine
+LABEL MAINTAINER Ray <51101661@qq.com>
 
 RUN apk add --update \
   ca-certificates \
