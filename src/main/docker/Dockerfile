@@ -3,7 +3,7 @@ ARG NGINX_RTMP_VERSION=1.2.1
 ARG FFMPEG_VERSION=4.2.1
 ##############################
 # Build the NGINX-build image.
-FROM openjdk:8-jdk-alpine as build-nginx
+FROM alpine:3.8 as build-nginx
 ARG NGINX_VERSION
 ARG NGINX_RTMP_VERSION
 
@@ -51,7 +51,7 @@ RUN cd /tmp/nginx-${NGINX_VERSION} && \
 
 ###############################
 # Build the FFmpeg-build image.
-FROM openjdk:8-jdk-alpine as build-ffmpeg
+FROM alpine:3.8 as build-ffmpeg
 ARG FFMPEG_VERSION
 ARG PREFIX=/usr/local
 ARG MAKEFLAGS="-j4"
@@ -120,7 +120,41 @@ RUN rm -rf /var/cache/* /tmp/*
 
 ##########################
 # Build the release image.
-FROM  openjdk:8-jdk-alpine
+FROM alpine:3.8
+
+# A few reasons for installing distribution-provided OpenJDK:
+#
+#  1. Oracle.  Licensing prevents us from redistributing the official JDK.
+#
+#  2. Compiling OpenJDK also requires the JDK to be installed, and it gets
+#     really hairy.
+#
+#     For some sample build times, see Debian's buildd logs:
+#       https://buildd.debian.org/status/logs.php?pkg=openjdk-8
+
+# Default to UTF-8 file.encoding
+ENV LANG C.UTF-8
+
+# add a simple script that can auto-detect the appropriate JAVA_HOME value
+# based on whether the JDK or only the JRE is installed
+RUN { \
+		echo '#!/bin/sh'; \
+		echo 'set -e'; \
+		echo; \
+		echo 'dirname "$(dirname "$(readlink -f "$(which javac || which java)")")"'; \
+	} > /usr/local/bin/docker-java-home \
+	&& chmod +x /usr/local/bin/docker-java-home
+ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
+ENV PATH $PATH:/usr/lib/jvm/java-1.8-openjdk/jre/bin:/usr/lib/jvm/java-1.8-openjdk/bin
+
+ENV JAVA_VERSION 8u191
+ENV JAVA_ALPINE_VERSION 8.191.12-r0
+
+RUN set -x \
+	&& apk add --no-cache \
+		openjdk8="$JAVA_ALPINE_VERSION" \
+	&& [ "$JAVA_HOME" = "$(docker-java-home)" ]
+
 LABEL MAINTAINER Ray <51101661@qq.com>
 
 RUN apk add --update \
