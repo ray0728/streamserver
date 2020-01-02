@@ -5,6 +5,11 @@ ARG NGINX_RTMP_VERSION=1.2.1
 ARG NGINX_VERSION=1.15.3
 ##############DOWNLOAD SOURCE######################
 FROM alpine:3.8 as build-source
+ARG OPENSSL_VERSION
+ARG PCRE_VERSION
+ARG ZLIB_VERSION
+ARG NGINX_RTMP_VERSION
+ARG NGINX_VERSION
 RUN cd /tmp/\
     && wget https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz\
 	&& tar -xzvf openssl-${OPENSSL_VERSION}.tar.gz\
@@ -27,6 +32,11 @@ RUN cd /tmp/\
 	&& rm nginx-${NGINX_VERSION}.tar.gz
 ###########################
 FROM ray0728/ffmpeg:1.0
+ARG OPENSSL_VERSION
+ARG PCRE_VERSION
+ARG ZLIB_VERSION
+ARG NGINX_RTMP_VERSION
+ARG NGINX_VERSION
 ADD sources.list /etc/apt/
 RUN apt update && apt install -y netcat-openbsd build-essential make
 RUN mkdir -p /usr/local/server
