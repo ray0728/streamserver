@@ -20,7 +20,7 @@ RUN	cd /tmp/\
 	&& rm pcre-${PCRE_VERSION}.tar.gz
 RUN cd /tmp/\
     && wget http://www.zlib.net/zlib-${ZLIB_VERSION}.tar.xz\
-	&& tar -xzvf zlib-${ZLIB_VERSION}.tar.xz\
+	&& tar -xvf zlib-${ZLIB_VERSION}.tar.xz\
 	&& rm zlib-${ZLIB_VERSION}.tar.xz
 RUN cd /tmp/\
     && wget https://github.com/arut/nginx-rtmp-module/archive/v${NGINX_RTMP_VERSION}.tar.gz\
