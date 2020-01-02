@@ -46,7 +46,7 @@ COPY --from=build-source /tmp/pcre-${PCRE_VERSION} /mnt/source/
 COPY --from=build-source /tmp/zlib-${ZLIB_VERSION} /mnt/source/
 COPY --from=build-source /tmp/nginx-rtmp-module-${NGINX_RTMP_VERSION} /mnt/source/
 COPY --from=build-source /tmp/nginx-${NGINX_VERSION} /mnt/source/nginx
-RUN cd /mnt/source/nginx && ./configure --prefix=/usr/local/nginx-${NGINX_VERSION} --with-openssl=/mnt/source/openssl-{OPENSSL_VERSION}/ --with-pcre=/mnt/source/pcre-{PCRE_VERSION}/ \ --with-zlib=/mnt/source/zlib-{ZLIB_VERSION}/ --add-module=/mnt/source/nginx-rtmp-module-${NGINX_RTMP_VERSION}/ --with-http_ssl_module && make && make install
+RUN cd /mnt/source/nginx && ./configure --prefix=/usr/local/nginx-${NGINX_VERSION} --with-openssl=/mnt/source/openssl-${OPENSSL_VERSION}/ --with-pcre=/mnt/source/pcre-${PCRE_VERSION}/ \ --with-zlib=/mnt/source/zlib-${ZLIB_VERSION}/ --add-module=/mnt/source/nginx-rtmp-module-${NGINX_RTMP_VERSION}/ --with-http_ssl_module && make && make install
 RUN cd /&&rm -rf /mnt/
 ADD @project.build.finalName@.jar /usr/local/server
 ADD nginx.conf /etc/nginx/nginx.conf
