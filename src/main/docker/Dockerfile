@@ -13,23 +13,28 @@ ARG NGINX_VERSION
 RUN cd /tmp/\
     && wget https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz\
 	&& tar -xzvf openssl-${OPENSSL_VERSION}.tar.gz\
-	&& rm openssl-${OPENSSL_VERSION}.tar.gz
+	&& rm openssl-${OPENSSL_VERSION}.tar.gz\
+	&& ls
 RUN	cd /tmp/\
     && wget https://ftp.pcre.org/pub/pcre/pcre-${PCRE_VERSION}.tar.gz\
 	&& tar -xzvf pcre-${PCRE_VERSION}.tar.gz\
-	&& rm pcre-${PCRE_VERSION}.tar.gz
+	&& rm pcre-${PCRE_VERSION}.tar.gz\
+	&& ls
 RUN cd /tmp/\
     && wget http://www.zlib.net/zlib-${ZLIB_VERSION}.tar.xz\
 	&& tar -xvf zlib-${ZLIB_VERSION}.tar.xz\
-	&& rm zlib-${ZLIB_VERSION}.tar.xz
+	&& rm zlib-${ZLIB_VERSION}.tar.xz\
+	&& ls
 RUN cd /tmp/\
     && wget https://github.com/arut/nginx-rtmp-module/archive/v${NGINX_RTMP_VERSION}.tar.gz\
 	&& tar -xzvf v${NGINX_RTMP_VERSION}.tar.gz\
-	&& rm v${NGINX_RTMP_VERSION}.tar.gz
+	&& rm v${NGINX_RTMP_VERSION}.tar.gz\
+	&& ls
 RUN cd /tmp/\
     && wget http://nginx.org/download/nginx-${NGINX_VERSION}.tar.gz\
 	&& tar xzvf nginx-${NGINX_VERSION}.tar.gz\
-	&& rm nginx-${NGINX_VERSION}.tar.gz
+	&& rm nginx-${NGINX_VERSION}.tar.gz\
+	&& ls
 ###########################
 FROM ray0728/ffmpeg:1.0
 ARG OPENSSL_VERSION
@@ -46,7 +51,6 @@ COPY --from=build-source /tmp/pcre-${PCRE_VERSION} /mnt/source/
 COPY --from=build-source /tmp/zlib-${ZLIB_VERSION} /mnt/source/
 COPY --from=build-source /tmp/nginx-rtmp-module-${NGINX_RTMP_VERSION} /mnt/source/nginx-rtmp-module
 COPY --from=build-source /tmp/nginx-${NGINX_VERSION} /mnt/source/nginx
-RUN ls /mnt/source
 RUN cd /mnt/source/nginx &&\
       ./configure --prefix=/usr/local/nginx-${NGINX_VERSION}\
       --with-openssl=/mnt/source/openssl-${OPENSSL_VERSION}/\
