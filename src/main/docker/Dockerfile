@@ -46,6 +46,7 @@ COPY --from=build-source /tmp/pcre-${PCRE_VERSION} /mnt/source/
 COPY --from=build-source /tmp/zlib-${ZLIB_VERSION} /mnt/source/
 COPY --from=build-source /tmp/nginx-rtmp-module-${NGINX_RTMP_VERSION} /mnt/source/
 COPY --from=build-source /tmp/nginx-${NGINX_VERSION} /mnt/source/nginx
+RUN ls /mnt/source
 RUN cd /mnt/source/nginx &&\
       ./configure --prefix=/usr/local/nginx-${NGINX_VERSION}\
       --with-openssl=/mnt/source/openssl-${OPENSSL_VERSION}/\
