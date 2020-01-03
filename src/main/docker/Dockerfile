@@ -42,6 +42,7 @@ RUN apt update && apt install -y netcat-openbsd build-essential make
 RUN mkdir -p /usr/local/server
 RUN mkdir -p /mnt/source/
 COPY --from=build-source /tmp/ /mnt/source/
+
 RUN cd /mnt/source/nginx-${NGINX_VERSION} &&\
       ./configure --prefix=/usr/local/nginx-${NGINX_VERSION}\
       --with-openssl=/mnt/source/openssl-${OPENSSL_VERSION}/\
@@ -52,6 +53,7 @@ RUN cd /mnt/source/nginx-${NGINX_VERSION} &&\
 	  make &&\
 	  make install
 RUN cd /&& rm -rf /mnt/
+RUN mkdir -p /opt/data/hls
 ADD @project.build.finalName@.jar /usr/local/server
 ADD nginx.conf /etc/nginx/nginx.conf
 ADD run.sh run.sh
