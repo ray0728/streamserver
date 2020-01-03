@@ -51,7 +51,7 @@ RUN cd /mnt/source/nginx &&\
       --with-openssl=/mnt/source/openssl-${OPENSSL_VERSION}/\
 	  --with-pcre=/mnt/source/pcre-${PCRE_VERSION}/\
 	  --with-zlib=/mnt/source/zlib-${ZLIB_VERSION}/\
-	  --add-module=/mnt/source/nginx-rtmp-module-${NGINX_RTMP_VERSION}/\
+	  --add-module=/mnt/source/v${NGINX_RTMP_VERSION}/\
 	  --with-http_ssl_module &&\
 	  make &&\
 	  make install
