@@ -6,6 +6,8 @@ import com.rcircle.service.stream.utils.HttpContext;
 import com.rcircle.service.stream.utils.HttpContextHolder;
 import com.rcircle.service.stream.utils.Toolkit;
 import com.rcircle.service.stream.utils.core.CommandCallback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +20,7 @@ import java.io.File;
 @RestController
 @RequestMapping("/stream")
 public class StreamController {
+    private Logger logger = LoggerFactory.getLogger(StreamController.class);
     private static final int TYPE_CREATE_HLS = 0;
     @Resource
     private HLSService hlsService;
@@ -54,12 +57,12 @@ public class StreamController {
 
         @Override
         public void preProcess(MateData flag) {
-
+            logger.info("(%d) start (src:%s, dst:%s)", flag.type, flag.srcfile, flag.filepath);
         }
 
         @Override
         public void processing(MateData flag, String ret) {
-
+            logger.info("(%d) start (src:%s, dst:%s) | %s", flag.type, flag.srcfile, flag.filepath, ret);
         }
 
         @Override
