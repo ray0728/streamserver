@@ -57,12 +57,12 @@ public class StreamController {
 
         @Override
         public void preProcess(MateData flag) {
-            logger.info("(%d) start (src:%s, dst:%s)", flag.type, flag.srcfile, flag.filepath);
+            logger.info(String.format("(%d) start (src:%s, dst:%s)", flag.type, flag.srcfile, flag.filepath));
         }
 
         @Override
         public void processing(MateData flag, String ret) {
-            logger.info("(%d) start (src:%s, dst:%s) | %s", flag.type, flag.srcfile, flag.filepath, ret);
+            logger.info(String.format("(%d) start (src:%s, dst:%s) | %s", flag.type, flag.srcfile, flag.filepath, ret));
         }
 
         @Override
