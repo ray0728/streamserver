@@ -42,8 +42,8 @@ public class HLSService{
         cmd.add("h264_mp4toannexb");
         cmd.add("-hls_list_size");
         cmd.add("0");
-        cmd.add("-vf");
-        cmd.add("scale=1280:-1");
+        // cmd.add("-vf");
+        // cmd.add("scale=1280:-1");
         cmd.add("-r");
         cmd.add("25");
         cmd.add(indexpath);
